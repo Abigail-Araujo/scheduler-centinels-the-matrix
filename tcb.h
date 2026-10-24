@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Estados de los procesos centinelas
+// ESTADOS
 typedef enum {
     NEW,
     READY,
@@ -13,32 +13,31 @@ typedef enum {
     FINISHED
 } TaskState;
 
-// Niveles de prioridad de las colas:
+// NIVELES DE PRIORIDAD
 typedef enum {
-    PRIORITY_HIGH = 0, // Centinelas de Comando con Round Robin Q=2
-    PRIORITY_MEDIUM = 1, // Centinelas Perforadores con Round Robin Q=4
-    PRIORITY_LOW = 2 // Centinelas de Desgaste con FCFS
+    PRIORITY_HIGH = 0, // RR q=2
+    PRIORITY_MEDIUM = 1, // RR q=4
+    PRIORITY_LOW = 2 // FCFS
 } PriorityLevel;
 
-// Task Control Block - TCB (Estructura central para representar cada unidad de combate)
+// TCB (estructura para representar un centinela)
 typedef struct TCB {
-    int id; // Identificador único del centinela
-    TaskState state; // Estado actual de ejecución
-    PriorityLevel priority; // Cola asignada (HIGH, MEDIUM o LOW)
-    int arrivalTime; // Tic global (Tg) en el que arriba al sistema
-    int totalBurst; // Ráfaga total de CPU requerida
-    int remainingBurst; // Ráfaga restante por ejecutar
-    int usedQuantum; // Quantum consumido acumulado en la ráfaga actual
-    int waitTime; // Tiempo acumulado esperando en cola de listos
-    int returnTime; // Turnaround Time (completionTime - arrivalTime)
+    int id; 
+    TaskState state; 
+    PriorityLevel priority; // cola asignada (HIGH, MEDIUM o LOW)
+    int arrivalTime; 
+    int totalBurst; // rafaga total de CPU requerida
+    int remainingBurst; // rafaga restante por ejecutar
+    int usedQuantum; // quantum consumido acumulado en la ráfaga actual
+    int waitTime; 
+    int returnTime; // (completionTime - arrivalTime)
 
-    // Campos auxiliares para soporte y métricas
-    int completionTime; // Tic global exacto en el que finaliza
-    int firstResponseTime; // Tic global de primera respuesta (-1 si no ha iniciado)
-    struct TCB *next; // Puntero para la lista enlazada de la cola
+    int completionTime; // tic global exacto en el que finaliza
+    int firstResponseTime; // tic global de primera respuesta (-1 si no ha iniciado)
+    struct TCB *next; 
 } TCB;
 
-// Función auxiliar para inicializar TCB
+// INICIALIZAR TCB
 static inline TCB* tcb_create(int arrivalTime, int id, PriorityLevel priority, int burst) {
     TCB *task = (TCB *)malloc(sizeof(TCB));
     if (!task) {
@@ -60,15 +59,14 @@ static inline TCB* tcb_create(int arrivalTime, int id, PriorityLevel priority, i
     return task;
 }
 
-// Función para liberar la memoria de TCB
+// LIBERAR MEMORIA DEL TCB
 static inline void tcb_liberar(TCB *task) {
     if (task) {
         free(task);
     }
 }
 
-// Retornar el nombre táctico del centinela para coincidir con la salida esperada:
-// [Type: Command], [Type: Driller] o [Type: Heavy]
+// RETORNAR TIPO DE CENTINELA COMO CADENA
 static inline const char* tcb_tipoCentinela(PriorityLevel priority) {
     switch (priority) {
         case PRIORITY_HIGH: return "Command";
