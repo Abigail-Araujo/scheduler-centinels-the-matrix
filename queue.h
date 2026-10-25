@@ -17,7 +17,7 @@ void queue_enqueue(Queue *q, TCB *task);
 
 TCB *queue_dequeue(Queue *q);
 
-void queue_push_front(Queue *q, TCB *task);
+void queue_colear(Queue *q, TCB *task);
 
 TCB *queue_getFirst(const Queue *q);
 

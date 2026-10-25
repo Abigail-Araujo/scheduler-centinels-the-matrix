@@ -69,12 +69,12 @@ TCB *queue_dequeue(Queue *q)
         q->tail = NULL;
     }
 
-    task->next = NULL; // Desconectar el nodo extraído
+    task->next = NULL; // Desconectar el nodo extraido
     q->size--;
     return task;
 }
 
-void queue_push_front(Queue *q, TCB *task)
+void queue_colear(Queue *q, TCB *task)
 {
     if (!q || !task)
         return;

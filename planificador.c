@@ -10,7 +10,7 @@
 int tic_global = 0;
 pthread_mutex_t mutex_colas;
 TCB *proceso_activo = NULL;
-static pthread_cond_t condicion_tic = PTHREAD_COND_INITIALIZER;
+static pthread_cond_t condicion_tic;
 static int tic_cpu_completado = 0;
 static int tareas_completadas = 0;
 static int tareas_totales = 0;
@@ -79,13 +79,13 @@ void *rutina_cpu(void *arg)
 
         if (modo_verbose)
         {
-            log_verbose_tick_start(tic_global);
+            log_v_separador_tick(tic_global);
         }
 
         if (tarea_completada_pendiente != NULL)
         {
-            metrics_record_completion(metricas_simulacion,
-                                      tarea_completada_pendiente, tic_global);
+            metrics_registro_completadas(metricas_simulacion,
+                                         tarea_completada_pendiente, tic_global);
             tarea_completada_pendiente = NULL;
             tareas_completadas++;
 
@@ -150,7 +150,7 @@ void *rutina_cpu(void *arg)
                 if (proceso_activo->firstResponseTime == -1)
                     proceso_activo->firstResponseTime = tic_global;
                 if (modo_verbose)
-                    log_verbose_dispatch(tic_global, proceso_activo);
+                    log_v_dispatch(tic_global, proceso_activo);
             }
         }
 
@@ -171,7 +171,7 @@ void *rutina_cpu(void *arg)
 
         if (modo_verbose)
         {
-            log_verbose_queues_state(colas, proceso_activo);
+            log_v_estado_colas(colas, proceso_activo);
         }
 
         tic_cpu_completado = tic_global;
@@ -213,6 +213,15 @@ int iniciar_planificador(TCB *lista_pendiente, int total_tareas,
         return -1;
     }
 
+    resultado = pthread_cond_init(&condicion_tic, NULL);
+    if (resultado != 0)
+    {
+        errno = resultado;
+        perror("Error de inicialización de la condición del tic");
+        pthread_mutex_destroy(&mutex_colas);
+        return -1;
+    }
+
     pthread_mutex_lock(&mutex_colas);
     simulacion_activa = true;
     pthread_mutex_unlock(&mutex_colas);
@@ -225,6 +234,7 @@ int iniciar_planificador(TCB *lista_pendiente, int total_tareas,
         pthread_mutex_lock(&mutex_colas);
         simulacion_activa = false;
         pthread_mutex_unlock(&mutex_colas);
+        pthread_cond_destroy(&condicion_tic);
         pthread_mutex_destroy(&mutex_colas);
         return -1;
     }
@@ -239,12 +249,14 @@ int iniciar_planificador(TCB *lista_pendiente, int total_tareas,
         pthread_cond_broadcast(&condicion_tic);
         pthread_mutex_unlock(&mutex_colas);
         pthread_join(reloj, NULL);
+        pthread_cond_destroy(&condicion_tic);
         pthread_mutex_destroy(&mutex_colas);
         return -1;
     }
 
     pthread_join(reloj, NULL);
     pthread_join(cpu, NULL);
+    pthread_cond_destroy(&condicion_tic);
     pthread_mutex_destroy(&mutex_colas);
 
     return 0;

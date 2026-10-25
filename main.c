@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     lista_pendiente = read_input_file(config.input_filepath, &total_tareas);
 
     metrics_init(&metricas, total_tareas);
-    log_header();
+    log_inicio();
 
     if (iniciar_planificador(lista_pendiente, total_tareas,
                              &metricas, config.verbose) != 0)
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    metrics_calculate_report(&metricas);
+    metrics_calcular_reporte(&metricas);
     metrics_destroy(&metricas);
     return EXIT_SUCCESS;
 }

@@ -38,7 +38,7 @@ void reencolar_inicio(TCB *task)
 {
     if (task && task->priority >= PRIORITY_HIGH && task->priority <= PRIORITY_LOW)
     {
-        queue_push_front(&colas[task->priority], task);
+        queue_colear(&colas[task->priority], task);
     }
 }
 

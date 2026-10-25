@@ -5,7 +5,7 @@
 #include <getopt.h>
 
 #define MAX_LINE_LENGTH 256
-#define OPT_INPUT 256  // Identificador único para la opción larga --input
+#define OPT_INPUT 256  // Identificador unico para la opcion larga --input
 
 void read_arguments(int argc, char *argv[], ConfigOptions *config) {
     config->input_filepath = NULL;
@@ -32,7 +32,7 @@ void read_arguments(int argc, char *argv[], ConfigOptions *config) {
         }
     }
 
-    // Validar que el parámetro obligatorio --input haya sido suministrado
+    // VALIDAR --input SUMINISTRADO
     if (config->input_filepath == NULL) {
         fprintf(stderr, "Error: Falta el parametro obligatorio --input <input_file>\n");
         fprintf(stderr, "Uso: %s [-v] --input <input_file>\n", argv[0]);
@@ -40,8 +40,7 @@ void read_arguments(int argc, char *argv[], ConfigOptions *config) {
     }
 }
 
-// Inserta un nuevo TCB en una lista enlazada ordenada ascendentemente por arrivalTime
-// En caso de empate en arrivalTime, mantiene el orden de lectura (estable)
+// INSERTAR NUEVO TCB EN LISTA ORDENADA ASCENDENTEMENTE
 static TCB* insert_sorted_by_arrival(TCB *head, TCB *new_task) {
     if (head == NULL || new_task->arrivalTime < head->arrivalTime) {
         new_task->next = head;
@@ -79,7 +78,7 @@ TCB*read_input_file(const char *filepath, int *task_count) {
             ptr++;
         }
 
-        // Ignorar líneas vacías o comentarios que inicien con '#'
+        // IGNORAR LINEAS VACIAS Y LO QUE INICIA CON "#"
         if (*ptr == '#' || *ptr == '\n' || *ptr == '\r' || *ptr == '\0') {
             continue;
         }
@@ -93,14 +92,14 @@ TCB*read_input_file(const char *filepath, int *task_count) {
             continue;
         }
 
-        // Validar rango de prioridad del enum (0, 1 o 2)
+        // VALIDACION DEL RANGO DE PRIORIDAD (0, 1, 2)
         if (raw_priority < PRIORITY_HIGH || raw_priority > PRIORITY_LOW) {
             fprintf(stderr, "Error: Prioridad inválida (%d) en la línea %d. Debe ser 0, 1 o 2.\n", raw_priority, line_num);
             fclose(file);
             exit(EXIT_FAILURE);
         }
 
-        // Crear el TCB e insertarlo ordenado en la lista inicial
+        // CREACION DEL TCB Y INSERCION ORDENADA A LA LISTA INICIAL
         PriorityLevel priority = (PriorityLevel)raw_priority;
         TCB *new_task = tcb_create(arrival_time, id, priority, burst);
         task_list_head = insert_sorted_by_arrival(task_list_head, new_task);
