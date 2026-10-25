@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 void log_header(void) {
-    printf("Fixed parameters: Queue 0 [Q=2] | Queue 1 [Q=4] | Queue 2 [FCFS]\n");
+    printf("Fixed parameters: Queue 0 [Q=2] | Queue 1 [Q=4] | Queue 2 [FCFS]\n\n");
 }
 
 void log_arrival(int tg, const TCB *task) {
@@ -67,8 +67,8 @@ void log_metrics(int total_time, int total_sentinels, double avg_waiting_time) {
     double throughput = (total_time > 0) ? ((double)total_sentinels / (double)total_time) : 0.0;
 
     printf("\n==================== GLOBAL PERFORMANCE METRICS ====================\n");
-    printf("- Total Simulation Time : %d clock ticks.\n", total_time);
-    printf("- System Throughput      : %.2f sentinels/tick.\n", throughput);
-    printf("- Average Waiting Time   : %.2f ticks.\n", avg_waiting_time);
+    printf("\t- Total Simulation Time  : %d clock ticks.\n", total_time);
+    printf("\t- System Throughput      : %.2f sentinels/tick.\n", throughput);
+    printf("\t- Average Waiting Time   : %.2f ticks.\n", avg_waiting_time);
     printf("====================================================================\n");
 }

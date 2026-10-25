@@ -4,7 +4,8 @@
 #include <stdbool.h>
 #include "tcb.h"
 
-typedef struct {
+typedef struct
+{
     TCB *head;
     TCB *tail;
     int size;
@@ -14,11 +15,11 @@ void queue_init(Queue *q);
 
 void queue_enqueue(Queue *q, TCB *task);
 
-TCB* queue_dequeue(Queue *q);
+TCB *queue_dequeue(Queue *q);
 
-void queue_colear(Queue *q, TCB *task);
+void queue_push_front(Queue *q, TCB *task);
 
-TCB* queue_getFirst(const Queue *q);
+TCB *queue_getFirst(const Queue *q);
 
 bool queue_is_empty(const Queue *q);
 

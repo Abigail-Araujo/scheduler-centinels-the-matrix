@@ -45,7 +45,7 @@ void read_arguments(int argc, char *argv[], ConfigOptions *config) {
 static TCB* insert_sorted_by_arrival(TCB *head, TCB *new_task) {
     if (head == NULL || new_task->arrivalTime < head->arrivalTime) {
         new_task->next = head;
-        return new_task;
+        return new_task; 
     }
 
     TCB *current = head;
