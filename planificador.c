@@ -108,7 +108,12 @@ void *rutina_cpu(void *arg)
 
             if (proceso_activo->usedQuantum >= quantum)
             {
-                log_quantum_expired(tic_global, proceso_activo, quantum);
+                int prioridad_lista = obtener_PrioridadMayorDisponible();
+                if (prioridad_lista >= PRIORITY_HIGH &&
+                    prioridad_lista <= (int)proceso_activo->priority)
+                {
+                    log_quantum_expired(tic_global, proceso_activo, quantum);
+                }
                 cambiar_estado(proceso_activo, INTERRUPTED);
                 proceso_activo->usedQuantum = 0;
                 cambiar_estado(proceso_activo, READY);
